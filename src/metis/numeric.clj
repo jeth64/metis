@@ -3,13 +3,13 @@
 
 ;; Following functions are taken from:
 ;; http://java.ociweb.com/mark/clojure/article.html
-(defn- polynomial
+(defn polynomial
   "computes the value of a polynomial
    with the given coefficients for a given value x"
   [coefs x]
   (reduce #(+ (* x %1) %2) coefs))
 
-(defn- derivative
+(defn derivative
   "computes the value of the derivative of a polynomial
    with the given coefficients for a given value x"
   [coefs x]
@@ -18,7 +18,7 @@
     (polynomial derivative-coefs x)))
 
 ;; so the antiderivative should be:
-(defn- antiderivative
+(defn antiderivative
   "computes the value of the antiderivative of a polynomial
    with the given coefficients for a given value x"
   [coefs c x]
@@ -68,7 +68,8 @@
 
 (defn newton-cotes
   "computes the integral between a and b for a function f
-   with the closed Newton-Cotes formula of degree d" ;; d < 7 recommended (else rounding errors and overflow)
+   with the closed Newton-Cotes formula of degree d"
+  ;; d < 7 recommended (else: rounding errors and overflow)
   [f a b d]
   (let [h (/ (- b a) d)
         w (lagrange-weights (inc d))
@@ -85,14 +86,3 @@
   (let [h (/ (- b a) n)
         parts (range a (inc b) h)]
     (reduce + (map #(newton-cotes f %1 %2 d) parts (next parts)))))
-
-(def f (partial polynomial [2 1 3])) ; f(x) = 2x^2 + x + 3
-(def f-prime (partial derivative [2 1 3])) ; f'(x) = 4x + 1
-(def F (partial antiderivative [2 1 3] 5)) ; F(x) = 2/3*x^3 + 1/2*x^2 + 3x + 5
-
-(-> (defactor [2 3])) ; [1 -5 6]
-(-> (lagrange-weights 3)) ; 1/3 4/3 1/3
-
-(-> (polynomial-integral [2 1 3] 0 10000)) ; 40/3
-(-> (newton-cotes f 0 100 3)) ; 40/3
-(-> (newton-cotes-summed f 0 10000 3 5)) ; 40/3
